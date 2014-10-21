@@ -25,6 +25,7 @@ void trie_destroy(TrieNode *root)
 	while (occ != NULL){
 		OccurrenceNode *temp = occ;
 		occ = occ->next;
+		free(temp->file_name);
 		free(temp);
 	}
 
@@ -114,7 +115,7 @@ void finalize_helper(TrieNode *node, char *file_name)
 OccurrenceNode *create_occurrence(char *file_name, int count)
 {
 	OccurrenceNode *occ = (OccurrenceNode *) malloc(sizeof(OccurrenceNode));
-	occ->file_name = (char *) malloc(sizeof(char) * strlen(file_name));
+	occ->file_name = (char *) malloc(sizeof(char) * (strlen(file_name) + 1));
 	strcpy(occ->file_name, file_name);
 	occ->count = count;
 	occ->next = NULL;
