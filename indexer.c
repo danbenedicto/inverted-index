@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "trie.h"
+#include "indexer.h"
 
 void index_destroy(Index *index)
 {

@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <string.h>
-#include "trie.h"
+#include "indexer.h"
 
 void list_dir(Index *index, char *dir_name)
 {

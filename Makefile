@@ -1,7 +1,7 @@
 all: index
 
-index: main.c trie.c trie.h
-	gcc -Wall -g -o index main.c trie.c
+index: main.c indexer.c indexer.h
+	gcc -Wall -g -o index main.c indexer.c
 
 clean:
 	rm -f index
@@ -9,4 +9,4 @@ clean:
 	rm -f *.tgz
 
 submission:
-	tar cfz pa3.tgz main.c trie.c trie.h testplan.txt Makefile readme.pdf
+	tar cfz pa3.tgz main.c indexer.c indexer.h testplan.txt Makefile readme.pdf
