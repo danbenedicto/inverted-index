@@ -5,7 +5,7 @@
 #include <string.h>
 #include "indexer.h"
 
-void list_dir(Index *index, char *dir_name)
+void recursive_read_file(Index *index, char *dir_name)
 {
 	DIR *dir;
 	struct dirent *entry;
@@ -23,7 +23,7 @@ void list_dir(Index *index, char *dir_name)
             if (strcmp(entry->d_name, ".") == 0|| strcmp(entry->d_name, "..") == 0) {
                 continue;
             }
-            list_dir(index, path);
+            recursive_read_file(index, path);
         } else if (entry->d_name[0] != '.') {
             FILE *to_invert = fopen(path, "r");
             read_file(index, to_invert, path);
@@ -47,18 +47,19 @@ int main(int argc, char const *argv[])
 
 	if(stat(argv[2], &s) == 0) {
 	    if(s.st_mode & S_IFDIR) {
-			list_dir(index, (char *) argv[2]);
+			recursive_read_file(index, (char *) argv[2]);
 	    } else if(s.st_mode & S_IFREG) {
 	    	FILE *to_invert = fopen(argv[2], "r");
 	    	read_file(index, to_invert, (char *) argv[2]);
 	    	fclose(to_invert);
 	    } else {
 	    	printf("error - '%s' is not a file or directory\n", argv[2]);
+	    	index_destroy(index);
 	    	return -1;
 	    }
-	}
-	else {
+	} else {
 	    printf("error - '%s' is not a file or directory\n", argv[2]);
+	    index_destroy(index);
 	    return -1;
 	}
 
