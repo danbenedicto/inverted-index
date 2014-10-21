@@ -6,3 +6,6 @@ index: main.c trie.c trie.h
 clean:
 	rm -f index
 	rm -fr index.dSYM
+
+submission:
+	tar cfz pa3.tgz main.c trie.c trie.h testplan.txt Makefile

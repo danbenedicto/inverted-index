@@ -179,17 +179,17 @@ TrieNode *get_child(TrieNode *parent, char letter, int create)
 	}
 }
 
-void print_index(Index *index)
+void fprint_index(FILE *out, Index *index)
 {
 	char buffer[128];
-	print_index_helper(index->root->first_child, buffer, 0);
+	fprint_index_helper(out, index->root->first_child, buffer, 0);
 }
 
 /*
  * Helper function that recursively (VLR) prints the trie.
  * @index is the index of the next empty spot in buffer.
  */
-void print_index_helper(TrieNode *root, char *buffer, int index)
+void fprint_index_helper(FILE *out, TrieNode *root, char *buffer, int index)
 {
 	if (root == NULL) return;
 
@@ -197,27 +197,27 @@ void print_index_helper(TrieNode *root, char *buffer, int index)
 
 	if (root->occurrences != NULL){
 		buffer[index + 1] = '\0';
-		printf("<list> %s\n", buffer);
+		fprintf(out, "<list> %s\n", buffer);
 		OccurrenceNode *occ = root->occurrences;
 		int count = 0;
 		while (occ != NULL){
-			printf("%s %d ", occ->file_name, occ->count);
+			fprintf(out, "%s %d ", occ->file_name, occ->count);
 			occ = occ->next;
 			count++;
 			if (count % 5 == 0){
-				printf("\n");
+				fprintf(out, "\n");
 			}
 		}
 		if (count % 5 != 0){
-			printf("\n");
+			fprintf(out, "\n");
 		}
-		printf("</list>\n");
+		fprintf(out, "</list>\n");
 
 	}
 
-	print_index_helper(root->first_child, buffer, index + 1);
+	fprint_index_helper(out, root->first_child, buffer, index + 1);
 	
 	buffer[index] = '\0'; /* not really necessary, will get overwritten anyway */
 
-	print_index_helper(root->next_sibling, buffer, index);
+	fprint_index_helper(out, root->next_sibling, buffer, index);
 }

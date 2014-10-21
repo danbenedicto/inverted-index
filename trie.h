@@ -25,5 +25,5 @@ void finalize_file_occurrences(Index *index, char *file_name);
 void finalize_helper(TrieNode *node, char *file_name);
 OccurrenceNode *create_occurrence(char *file_name, int count);
 TrieNode *get_child(TrieNode *parent, char letter, int create);
-void print_index(Index *index);
-void print_index_helper(TrieNode *root, char *buffer, int index);
+void fprint_index(FILE *out, Index *index);
+void fprint_index_helper(FILE *out, TrieNode *root, char *buffer, int index);
