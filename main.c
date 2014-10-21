@@ -45,7 +45,7 @@ int main(int argc, char const *argv[])
 		return -1;
 	}
 
-	if(stat(argv[2], &s) == 0 ) {
+	if(stat(argv[2], &s) == 0) {
 	    if(s.st_mode & S_IFDIR) {
 			list_dir(index, (char *) argv[2]);
 	    } else if(s.st_mode & S_IFREG) {
@@ -53,14 +53,34 @@ int main(int argc, char const *argv[])
 	    	read_file(index, to_invert, (char *) argv[2]);
 	    	fclose(to_invert);
 	    } else {
-	    	printf("error\n");
+	    	printf("error - '%s' is not a file or directory\n", argv[2]);
+	    	return -1;
 	    }
 	}
 	else {
-	    printf("error\n");
+	    printf("error - '%s' is not a file or directory\n", argv[2]);
+	    return -1;
 	}
 
-	FILE *inverted = fopen(argv[1], "w");
+	char file_name[64];
+	strcpy(file_name, argv[1]);
+	FILE *inverted = fopen(file_name, "r");
+
+	while (inverted){
+		fclose(inverted);
+		char choice;
+		printf("A file with the name %s already exists. Overwrite? (y/n) ", argv[1]);
+		scanf(" %c", &choice);
+		if (choice == 'y'){
+			break;
+		} else {
+			printf("Enter a different file name: ");
+			scanf("%s", file_name);
+			inverted = fopen(file_name, "r");
+		}
+	}
+
+	inverted = fopen(file_name, "w");
 	fprint_index(inverted, index);
 	fclose(inverted);
 
