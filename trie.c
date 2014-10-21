@@ -59,14 +59,14 @@ Index *create_index()
  */
 
 /*if a prefix of a Dictionary word is in the data file, that’s the prefix count*/
-void read_file(Index *index, FILE *dict_file, char *file_name)
+void read_file(Index *index, FILE *file, char *file_name)
 {
 	char buffer[128];
 	int i;
 
-	fscanf(dict_file, "%*[^0-9a-zA-Z]");
+	fscanf(file, "%*[^0-9a-zA-Z]");
 
-	while(fscanf(dict_file, "%[0-9a-zA-Z]%*[^0-9a-zA-Z]", buffer) == 1){
+	while(fscanf(file, "%[0-9a-zA-Z]%*[^0-9a-zA-Z]", buffer) == 1){
 		TrieNode *temp = index->root;
 		for(i = 0; buffer[i]; i++){
 			temp = get_child(temp, tolower(buffer[i]), 1);
