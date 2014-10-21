@@ -1,0 +1,5 @@
+index
+libsl.a
+*.dSYM
+*.o
+
