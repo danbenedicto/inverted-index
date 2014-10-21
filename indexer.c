@@ -97,7 +97,7 @@ void finalize_helper(TrieNode *node, char *file_name)
 		} else {
 			OccurrenceNode *prev = node->occurrences;
 			OccurrenceNode *curr = prev->next;
-			while (curr != NULL && (occ->count < prev->count)) {
+			while (curr != NULL && (occ->count < curr->count)) {
 				prev = curr;
 				curr = curr->next;
 			}
