@@ -1,0 +1,37 @@
+Sarah Bizzarro & Dan Benedicto
+
+Test Case 1
+-----------
+
+Input:
+./index x testfile
+
+Expected: textfile indexed in index
+Result: textfile indexed in index
+
+Test Case 2
+-----------
+
+Input:
+./index x testdir/testfile1
+
+Expected: testdir/testfile1 indexed in index
+Result: testdir/testfile1 indexed in index
+
+Test Case 3
+------------
+
+Input:
+./index x .
+
+Expected: All files in . indexed in index
+Result: All files in . indexed in index
+
+Test Case 4
+-------------
+
+Input:
+./index x testdir
+
+Expected: All files in testdir indexed in index
+Result: All files in testdir indexed in index

@@ -114,7 +114,8 @@ void finalize_helper(TrieNode *node, char *file_name)
 OccurrenceNode *create_occurrence(char *file_name, int count)
 {
 	OccurrenceNode *occ = (OccurrenceNode *) malloc(sizeof(OccurrenceNode));
-	occ->file_name = file_name;
+	occ->file_name = (char *) malloc(sizeof(char) * strlen(file_name));
+	strcpy(occ->file_name, file_name);
 	occ->count = count;
 	occ->next = NULL;
 

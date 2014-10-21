@@ -3,101 +3,68 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <string.h>
-#include <limits.h>
 #include "trie.h"
 
-void list_dir(const char *dir_name){
-
+void list_dir(Index *index, char *dir_name)
+{
 	DIR *dir;
-	dir = opendir(dir_name);
+	struct dirent *entry;
 
-	if (!dir) {
-		printf("no dir\n");
+	if (!(dir = opendir(dir_name)) || !(entry = readdir(dir))) {
+        return;
 	}
 
-	while (1) {
+	do {
+		char path[1024];
+        int len = snprintf(path, sizeof(path)-1, "%s/%s", dir_name, entry->d_name);
+        path[len] = 0;
 
-		struct dirent *entry;
-		const char *d_name;
+        if (entry->d_type == DT_DIR) {
+            if (strcmp(entry->d_name, ".") == 0|| strcmp(entry->d_name, "..") == 0) {
+                continue;
+            }
+            list_dir(index, path);
+        } else if (entry->d_name[0] != '.') {
+            FILE *to_invert = fopen(path, "r");
+            read_file(index, to_invert, path);
+            fclose(to_invert);
+        }
+    } while ((entry = readdir(dir)));
 
-		entry = readdir(dir);
-		if (!entry) {
-			break;
-		}
-
-		d_name = entry->d_name;
-
-		if (strcmp (d_name, "..") != 0 && strcmp (d_name, ".") != 0) {
-
-			FILE *to_invert = fopen(d_name, "r");
-	    	read_file(index, to_invert, d_name);
-
-
-			printf ("%s/%s\n", dir_name, d_name);
-
-		}
-
-		if (entry->d_type & DT_DIR) {
-        
-	        if (strcmp (d_name, "..") != 0 && strcmp (d_name, ".") != 0) {
-
-	            int path_length;
-	            char path[PATH_MAX];
-
-	            path_length = snprintf (path, PATH_MAX, "%s/%s", dir_name, d_name);
-	            printf ("%s\n", path);
-
-				list_dir (path);
-	        }
-		}
-    }
+    closedir(dir);
 }
 
 
-int main(int argc, char const *argv[]){
-
+int main(int argc, char const *argv[])
+{
 	Index *index = create_index();
 	struct stat s;
-	FILE *to_invert, *inverted;
 
 	if (argc < 3) {
 		fprintf(stderr, "invalid input\n");
 		return -1;
 	}
 
-	inverted = fopen(argv[1], "w");
-
-	/* If a directory, you need to
-	 * recursively index all files in the directory (and its sub-directories). If a file, you just
-	 * need to index that single file.
-	 */
-
-	if(stat(argv[2],&s) == 0 ) {
-
+	if(stat(argv[2], &s) == 0 ) {
 	    if(s.st_mode & S_IFDIR) {
-
-			list_dir (argv[2]);
-
-	    }
-	    else if(s.st_mode & S_IFREG) {
-
-	    	to_invert = fopen(argv[2], "r");
+			list_dir(index, (char *) argv[2]);
+	    } else if(s.st_mode & S_IFREG) {
+	    	FILE *to_invert = fopen(argv[2], "r");
 	    	read_file(index, to_invert, (char *) argv[2]);
-	    	index_destroy(index);
-
-	    }
-	    else {
+	    	fclose(to_invert);
+	    } else {
 	    	printf("error\n");
 	    }
 	}
 	else {
-
 	    printf("error\n");
 	}
 
+	FILE *inverted = fopen(argv[1], "w");
+	fprint_index(inverted, index);
+	fclose(inverted);
+
+	index_destroy(index);
+
 	return 0;
-	//scan_file(to_invert);
-
-	/* parse file and read each text file until end of this .txt file */
-
 }
